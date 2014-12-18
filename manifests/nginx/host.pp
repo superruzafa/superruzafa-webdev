@@ -1,4 +1,4 @@
-define webdev::nginx::site (
+define webdev::nginx::host (
   $servername     = $title,
   $port           = 80,
   $root           = '/vagrant',

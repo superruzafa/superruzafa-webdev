@@ -5,22 +5,23 @@ define webdev::nginx::host (
   $index          = 'index.php',
   $fastcgi_pass   = 'unix:/var/run/php5-fpm.sock',
   $fastcgi_index  = 'index.php',
-  $content        = undef,
+  $template       = undef,
 ) {
 
   $source = "/etc/nginx/sites-available/$title"
 
   class { 'webdev::nginx::server': }
 
-  $real_content = $content ? {
-    undef   => template('webdev/nginx/default_site.erb'),
-    default => $content
+  $real_template = $template ? {
+    undef   => 'webdev/nginx/default_host.erb',
+    default => $template
   }
 
   file { $source:
     ensure => 'file',
-    content => $real_content,
+    content => template($real_template),
     require => Package['nginx'],
+    notify => Service['nginx']
   }
 
   file { "/etc/nginx/sites-enabled/$title":
